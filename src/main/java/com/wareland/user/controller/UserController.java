@@ -22,6 +22,13 @@ public class UserController {
         this.userService = userService;
     }
 
+    // Get all users
+    @GetMapping
+    public ResponseEntity<ApiResponse<?>> getAllUsers() {
+        return ResponseEntity.ok(ApiResponse.success(userService.getAllUsers()));
+    }
+
+
     // Get profile by ID (untuk sekarang tanpa auth, bisa ditambahkan nanti)
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<UserProfileResponse>> getProfile(@PathVariable Long id) {
@@ -46,4 +53,10 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success("Akun berhasil dihapus", null));
 
     }
+
+    @GetMapping("/role/{role}")
+    public ResponseEntity<ApiResponse<?>> getUsersByRole(@PathVariable String role) {
+        return ResponseEntity.ok(ApiResponse.success(userService.getUsersByRole(role)));
+    }
+
 }
