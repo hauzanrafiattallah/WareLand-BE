@@ -15,6 +15,10 @@ import com.wareland.user.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.stream.Collectors;
+
+
+import java.util.List;
 
 /**
  * Service layer untuk logika bisnis manajemen user:
@@ -31,6 +35,15 @@ public class UserService {
                        PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserProfileResponse> getAllUsers() {
+        return userRepository.findAll()
+                .stream()
+                .map(this::mapToProfile)   // gunakan mapper yang sudah ada
+                .collect(Collectors.toList());
+
     }
 
     public UserProfileResponse register(UserRegisterRequest request) {
@@ -97,6 +110,16 @@ public class UserService {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User dengan ID " + id + " tidak ditemukan"));
     }
+
+    public List<UserProfileResponse> getUsersByRole(String role) {
+        UserRole userRole = UserRole.valueOf(role.toUpperCase());
+
+        return userRepository.findByUserRole(userRole)
+                .stream()
+                .map(this::mapToProfile)
+                .collect(Collectors.toList());
+    }
+
 
     private UserProfileResponse mapToProfile(User user) {
         return new UserProfileResponse(
