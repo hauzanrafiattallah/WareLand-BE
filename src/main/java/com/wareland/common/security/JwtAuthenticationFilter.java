@@ -13,14 +13,17 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Collections;
+import com.wareland.user.repository.RevokedTokenRepository;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider tokenProvider;
+    private final RevokedTokenRepository revokedTokenRepository;
 
-    public JwtAuthenticationFilter(JwtTokenProvider tokenProvider) {
+    public JwtAuthenticationFilter(JwtTokenProvider tokenProvider, RevokedTokenRepository revokedTokenRepository) {
         this.tokenProvider = tokenProvider;
+        this.revokedTokenRepository = revokedTokenRepository;
     }
 
     @Override
@@ -31,7 +34,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
-            if (tokenProvider.validateToken(token)) {
+            // Reject revoked token
+            if (!revokedTokenRepository.existsByToken(token) && tokenProvider.validateToken(token)) {
                 String username = tokenProvider.getUsername(token);
 
                 var auth = new UsernamePasswordAuthenticationToken(
