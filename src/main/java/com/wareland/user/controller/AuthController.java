@@ -7,6 +7,7 @@ import com.wareland.user.dto.LoginResponse;
 import com.wareland.user.dto.UserProfileResponse;
 import com.wareland.user.dto.UserRegisterRequest;
 import com.wareland.user.service.UserService;
+import com.wareland.user.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -23,10 +24,12 @@ public class AuthController {
 
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final AuthService authService;
 
-    public AuthController(UserService userService, JwtTokenProvider jwtTokenProvider) {
+    public AuthController(UserService userService, JwtTokenProvider jwtTokenProvider, AuthService authService) {
         this.userService = userService;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.authService = authService;
     }
 
     @PostMapping("/register")
@@ -54,5 +57,11 @@ public class AuthController {
         String username = (auth != null) ? auth.getName() : null;
         UserProfileResponse profile = userService.getProfileByUsername(username);
         return ResponseEntity.ok(ApiResponse.success(profile));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<Void>> logout(@RequestHeader(name = "Authorization", required = false) String authorizationHeader) {
+        authService.logout(authorizationHeader);
+        return ResponseEntity.ok(ApiResponse.success("Logout berhasil", null));
     }
 }
