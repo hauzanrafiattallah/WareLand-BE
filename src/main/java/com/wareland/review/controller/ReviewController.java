@@ -48,7 +48,7 @@ public class ReviewController {
         List<ReviewBuyerResponse> responses = reviewService.getReviewsByBuyer(buyerId);
         return ResponseEntity.ok(ApiResponse.success(responses));
     }
-}
+
     // ================= UPDATE =================
     @PutMapping("/{reviewId}")
     public ResponseEntity<ApiResponse<ReviewResponse>> update(

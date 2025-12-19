@@ -112,7 +112,7 @@ public class ReviewService {
                 .map(reviewMapper::toBuyerResponse)
                 .collect(Collectors.toList());
     }
-}
+
     // ================= UPDATE =================
     public ReviewResponse updateReview(Long reviewId, Long buyerId, ReviewUpdateRequest request) {
 

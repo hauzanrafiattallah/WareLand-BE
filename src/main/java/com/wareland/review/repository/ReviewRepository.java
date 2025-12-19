@@ -13,6 +13,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     List<Review> findAllByPropertyPropertyIdOrderByCreatedAtDesc(Integer propertyId);
 
-    // Ambil semua review milik buyer tertentu (urut terbaru)
+
     List<Review> findAllByBuyerUserIdOrderByCreatedAtDesc(Long buyerId);
 }
