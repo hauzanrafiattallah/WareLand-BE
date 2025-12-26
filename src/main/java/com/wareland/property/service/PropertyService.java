@@ -41,7 +41,7 @@ public class PropertyService {
         Property existing = propertyRepository.findByPropertyIdAndSeller(property.getPropertyId(), seller)
                 .orElseThrow(() -> new BusinessException("Anda tidak berhak mengubah property ini atau property tidak ditemukan"));
 
-        existing.updateDetails(property.getAddress(), property.getPrice(), property.getDescription());
+        existing.updateDetails(property.getAddress(), property.getPrice(), property.getDescription(), property.getImageUrl());
         propertyRepository.save(existing);
     }
 
