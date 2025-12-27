@@ -1,5 +1,6 @@
 package com.wareland.property.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wareland.review.model.Review;
 import com.wareland.user.model.Seller;
 import jakarta.persistence.*;
@@ -25,19 +26,24 @@ public class Property {
     @Column(nullable = false)
     private double price;
 
+    @Column(length = 255)
+    private String imageUrl;
+
     @Column(length = 2000)
     private String description;
 
     // TEPAT 1 owner (Seller). Aggregation via reference
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id", nullable = false)
+    @JsonIgnoreProperties("properties")
     private Seller seller;
 
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("property")
     private List<Review> reviews = new ArrayList<>();
 
     // Behavior: update basic details only (no ownership change)
-    public void updateDetails(String newAddress, double newPrice, String newDescription) {
+    public void updateDetails(String newAddress, double newPrice, String newDescription, String newImageUrl) {
         if (newAddress != null && !newAddress.isBlank()) {
             this.address = newAddress;
         }
@@ -47,10 +53,13 @@ public class Property {
         if (newDescription != null) {
             this.description = newDescription;
         }
+        if (newImageUrl != null && !newImageUrl.isBlank()) {
+            this.imageUrl = newImageUrl;
+        }
     }
 
     public String displayProperty() {
-        return String.format("Property{id=%d, address='%s', price=%.2f}", propertyId, address, price);
+        return String.format("Property{id=%d, address='%s', price=%.2f, image='%s'}", propertyId, address, price, imageUrl);
     }
 
     // Getters & Setters (encapsulation)
@@ -76,6 +85,14 @@ public class Property {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public String getDescription() {
