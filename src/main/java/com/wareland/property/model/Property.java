@@ -1,48 +1,70 @@
 package com.wareland.property.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.wareland.review.model.Review;
-import com.wareland.user.model.Seller;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.wareland.review.model.Review;
+import com.wareland.user.model.Seller;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+
+/**
+ * Entity yang merepresentasikan data property/gudang.
+ */
 @Entity
 @Table(name = "properties")
 public class Property {
 
+    /** ID unik property (auto-generated). */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer propertyId;
 
+    /** Alamat lengkap property. */
     @NotBlank
     @Column(nullable = false, length = 255)
     private String address;
 
+    /** Harga sewa property (minimal 0). */
     @Min(0)
     @Column(nullable = false)
     private double price;
 
+    /** URL gambar property (opsional). */
     @Column(length = 255)
     private String imageUrl;
 
+    /** Deskripsi detail property (opsional). */
     @Column(length = 2000)
     private String description;
 
-    // TEPAT 1 owner (Seller). Aggregation via reference
+    /** Relasi ke Seller pemilik property. */
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id", nullable = false)
     @JsonIgnoreProperties("properties")
     private Seller seller;
 
+    /** Daftar review yang diberikan pada property ini. */
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties("property")
     private List<Review> reviews = new ArrayList<>();
 
-    // Behavior: update basic details only (no ownership change)
+    /**
+     * Update detail property tanpa mengubah ownership.
+     */
     public void updateDetails(String newAddress, double newPrice, String newDescription, String newImageUrl) {
         if (newAddress != null && !newAddress.isBlank()) {
             this.address = newAddress;
@@ -58,11 +80,17 @@ public class Property {
         }
     }
 
+    /**
+     * Tampilkan ringkasan property dalam format string.
+     */
     public String displayProperty() {
         return String.format("Property{id=%d, address='%s', price=%.2f, image='%s'}", propertyId, address, price, imageUrl);
     }
 
-    // Getters & Setters (encapsulation)
+    // ========================
+    // Getter & Setter
+    // ========================
+
     public Integer getPropertyId() {
         return propertyId;
     }

@@ -23,18 +23,30 @@ public class CatalogRepository {
     @PersistenceContext
     private EntityManager em;
 
+    /**
+     * Constructor untuk inject repository.
+     */
     public CatalogRepository(PropertyRepository propertyRepository) {
         this.propertyRepository = propertyRepository;
     }
 
+    /**
+     * Ambil semua property.
+     */
     public List<Property> findAll() {
         return propertyRepository.findAll();
     }
 
+    /**
+     * Cari property berdasarkan ID.
+     */
     public Optional<Property> findById(int propertyId) {
         return propertyRepository.findById(propertyId);
     }
 
+    /**
+     * Cari property berdasarkan keyword pada alamat/deskripsi.
+     */
     public List<Property> searchByKeyword(String keyword) {
         if (keyword == null || keyword.isBlank()) {
             return new ArrayList<>();
@@ -48,6 +60,9 @@ public class CatalogRepository {
         return q.getResultList();
     }
 
+    /**
+     * Filter property berdasarkan keyword dan range harga.
+     */
     public List<Property> filterByCriteria(String keyword, Double minPrice, Double maxPrice) {
         StringBuilder jpql = new StringBuilder("SELECT p FROM Property p WHERE 1=1");
         boolean useKeyword = keyword != null && !keyword.isBlank();

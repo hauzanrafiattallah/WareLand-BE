@@ -7,12 +7,19 @@ import com.wareland.catalog.dto.CatalogPropertyResponse.SellerInfo;
 import com.wareland.property.model.Property;
 import com.wareland.user.model.Seller;
 
+/**
+ * Mapper untuk konversi entity Property ke DTO CatalogPropertyResponse.
+ */
 @Component
 public class CatalogMapper {
 
+    /**
+     * Konversi entity Property ke response DTO untuk katalog publik.
+     */
     public CatalogPropertyResponse toResponse(Property property) {
         if (property == null) return null;
         
+        // Mapping data Seller ke SellerInfo
         SellerInfo sellerInfo = null;
         Seller seller = property.getSeller();
         if (seller != null) {

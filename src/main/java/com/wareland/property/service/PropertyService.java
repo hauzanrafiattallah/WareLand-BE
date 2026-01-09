@@ -12,17 +12,25 @@ import com.wareland.property.repository.PropertyRepository;
 import com.wareland.user.model.Seller;
 import com.wareland.user.model.UserRole;
 
+/**
+ * Service untuk mengelola logika bisnis Property.
+ */
 @Service
 @Transactional
 public class PropertyService {
 
     private final PropertyRepository propertyRepository;
 
+    /**
+     * Constructor untuk inject repository.
+     */
     public PropertyService(PropertyRepository propertyRepository) {
         this.propertyRepository = propertyRepository;
     }
 
-    // Validasi ownership dilakukan di setiap operasi yang memodifikasi data
+    /**
+     * Buat property baru untuk Seller tertentu.
+     */
     public Property createProperty(Seller seller, Property data) {
         validateSeller(seller);
         if (data == null) {
@@ -32,6 +40,9 @@ public class PropertyService {
         return propertyRepository.save(data);
     }
 
+    /**
+     * Update detail property yang dimiliki Seller.
+     */
     public void updateProperty(Seller seller, Property property) {
         validateSeller(seller);
         if (property == null || property.getPropertyId() == null) {
@@ -45,6 +56,9 @@ public class PropertyService {
         propertyRepository.save(existing);
     }
 
+    /**
+     * Hapus property yang dimiliki Seller.
+     */
     public void deleteProperty(Seller seller, int propertyId) {
         validateSeller(seller);
         Property existing = propertyRepository.findByPropertyIdAndSeller(propertyId, seller)
@@ -52,18 +66,27 @@ public class PropertyService {
         propertyRepository.delete(existing);
     }
 
+    /**
+     * Verifikasi apakah Seller memiliki property tertentu.
+     */
     @Transactional(readOnly = true)
     public boolean verifyOwnership(Seller seller, int propertyId) {
         validateSeller(seller);
         return propertyRepository.existsByPropertyIdAndSeller(propertyId, seller);
     }
 
+    /**
+     * Ambil semua property milik Seller tertentu.
+     */
     @Transactional(readOnly = true)
     public List<Property> getSellerProperties(Seller seller) {
         validateSeller(seller);
         return propertyRepository.findBySeller(seller);
     }
 
+    /**
+     * Validasi bahwa user adalah Seller yang valid.
+     */
     private void validateSeller(Seller seller) {
         if (seller == null || seller.getUserRole() != UserRole.SELLER) {
             throw new BusinessException("Hanya Seller yang dapat mengelola Property");

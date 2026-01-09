@@ -9,6 +9,10 @@ import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDateTime;
 
+/**
+ * Entity yang merepresentasikan review dari Buyer untuk Property.
+ * Satu Buyer hanya bisa memberikan satu review per Property.
+ */
 @Entity
 @Table(
         name = "reviews",
@@ -21,38 +25,51 @@ import java.time.LocalDateTime;
 )
 public class Review {
 
+    /** ID unik review (auto-generated). */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /** Rating 1-5 (wajib). */
     @Min(1)
     @Max(5)
     @Column(nullable = false)
     private int rating;
 
+    /** Komentar review (wajib, maks 1000 karakter). */
     @NotBlank
     @Column(nullable = false, length = 1000)
     private String comment;
 
+    /** Relasi ke Buyer yang membuat review. */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "buyer_id", nullable = false)
     private Buyer buyer;
 
+    /** Relasi ke Property yang direview. */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "property_id", nullable = false)
     private Property property;
 
+    /** Waktu review dibuat (otomatis). */
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    /** Waktu review diupdate (otomatis). */
     @Column
     private LocalDateTime updatedAt;
 
+    /**
+     * Set createdAt otomatis saat pertama kali disimpan.
+     */
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
     }
 
+    /**
+     * Set updatedAt otomatis saat diupdate.
+     */
     @PreUpdate
     public void preUpdate() {
         this.updatedAt = LocalDateTime.now();

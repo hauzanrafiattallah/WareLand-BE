@@ -2,18 +2,25 @@ package com.wareland.review.dto;
 
 import jakarta.validation.constraints.*;
 
+/**
+ * DTO request untuk membuat review baru.
+ */
 public class ReviewCreateRequest {
 
+    /** ID buyer yang membuat review (wajib). */
     @NotNull
     private Long buyerId;
 
+    /** ID property yang direview (wajib). */
     @NotNull
     private Long propertyId;
 
+    /** Rating 1-5 (wajib). */
     @Min(1)
     @Max(5)
     private int rating;
 
+    /** Komentar review (wajib). */
     @NotBlank
     private String comment;
 
