@@ -9,17 +9,25 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controller untuk menampilkan katalog property ke publik.
+ */
 @RestController
 @RequestMapping("/api/catalog")
 public class CatalogController {
 
     private final CatalogService catalogService;
 
+    /**
+     * Constructor untuk inject dependency.
+     */
     public CatalogController(CatalogService catalogService) {
         this.catalogService = catalogService;
     }
 
-    // GET /api/catalog/properties
+    /**
+     * Endpoint untuk mengambil semua property.
+     */
     @GetMapping("/properties")
     public ResponseEntity<ApiResponse<List<CatalogPropertyResponse>>> getAllProperties() {
         List<CatalogPropertyResponse> data = catalogService.showAllProperties();
@@ -29,14 +37,16 @@ public class CatalogController {
         return ResponseEntity.ok(ApiResponse.success(data));
     }
 
-    // GET /api/catalog/properties/search
+    /**
+     * Endpoint untuk mencari property berdasarkan keyword dan range harga.
+     */
     @GetMapping("/properties/search")
     public ResponseEntity<ApiResponse<List<CatalogPropertyResponse>>> searchProperties(
             @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "minPrice", required = false) Double minPrice,
             @RequestParam(value = "maxPrice", required = false) Double maxPrice
     ) {
-        // Controller hanya mengikat request, tanpa business logic
+        // Buat objek request dari parameter
         CatalogSearchRequest req = new CatalogSearchRequest();
         req.setKeyword(keyword);
         req.setMinPrice(minPrice);
@@ -49,7 +59,9 @@ public class CatalogController {
         return ResponseEntity.ok(ApiResponse.success(data));
     }
 
-    // GET /api/catalog/properties/{propertyId}
+    /**
+     * Endpoint untuk mengambil detail property berdasarkan ID.
+     */
     @GetMapping("/properties/{propertyId}")
     public ResponseEntity<ApiResponse<CatalogPropertyResponse>> getPropertyDetail(@PathVariable int propertyId) {
         CatalogPropertyResponse detail = catalogService.getPropertyDetail(propertyId);

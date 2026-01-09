@@ -12,17 +12,25 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controller untuk mengelola CRUD review dari Buyer.
+ */
 @RestController
 @RequestMapping("/api/reviews")
 public class ReviewController {
 
     private final ReviewService reviewService;
 
+    /**
+     * Constructor untuk inject dependency.
+     */
     public ReviewController(ReviewService reviewService) {
         this.reviewService = reviewService;
     }
 
-    // ================= CREATE =================
+    /**
+     * Endpoint untuk membuat review baru.
+     */
     @PostMapping
     public ResponseEntity<ApiResponse<ReviewResponse>> create(
             @Valid @RequestBody ReviewCreateRequest request) {
@@ -33,7 +41,9 @@ public class ReviewController {
         );
     }
 
-    // ================= GET =================
+    /**
+     * Endpoint untuk mengambil semua review berdasarkan property ID.
+     */
     @GetMapping("/property/{propertyId}")
     public ResponseEntity<ApiResponse<List<ReviewResponse>>> getByProperty(
             @PathVariable Long propertyId) {
@@ -42,14 +52,18 @@ public class ReviewController {
         return ResponseEntity.ok(ApiResponse.success(responses));
     }
 
-    // GET → menampilkan semua review milik seorang buyer (PRIVATE)
+    /**
+     * Endpoint untuk mengambil semua review milik seorang buyer.
+     */
     @GetMapping("/buyer/{buyerId}")
     public ResponseEntity<ApiResponse<List<ReviewBuyerResponse>>> getByBuyer(@PathVariable("buyerId") Long buyerId) {
         List<ReviewBuyerResponse> responses = reviewService.getReviewsByBuyer(buyerId);
         return ResponseEntity.ok(ApiResponse.success(responses));
     }
 
-    // ================= UPDATE =================
+    /**
+     * Endpoint untuk mengupdate review berdasarkan ID.
+     */
     @PutMapping("/{reviewId}")
     public ResponseEntity<ApiResponse<ReviewResponse>> update(
             @PathVariable Long reviewId,
@@ -62,7 +76,9 @@ public class ReviewController {
         );
     }
 
-    // ================= DELETE =================
+    /**
+     * Endpoint untuk menghapus review berdasarkan ID.
+     */
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<ApiResponse<String>> delete(
             @PathVariable Long reviewId,
